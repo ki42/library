@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Saint Louis Libary Search Engine</title>
+        <style type="text/css">
+            .error {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+      
+        
+        <div style='float: right'>
+          {% if 'user' in session %}
+            {{ session['user'] }}
+            <form action="/logout" method="post" id='logout'>
+              <input type="submit" value="Log Out" />
+            </form>
+          {% else %}
+            
+            <form>
+              <table>
+              <tr>
+                    <td>Would you like to view saved searches?
+                <label>Username</label>
+                    </td>
+                     <td>
+                     <input name="username" type="text" value='{{username}}' />
+                    <td><label>Password</label>
+                    </td>
+                    <td>
+                    <input name="password" type="password" value='{{password}}' />      
+                 </td>
+                </tr>
+                    <td class="error">{{password_error}}
+                    </td>  
+                     <td class="error"> {{username_error}}
+                    </td>
+                  </table>
+            </form>
+        {% endif %}
+        </div>
+        <h1>
+            Saint Louis Libary Search Engine
+        </h1>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+              {% for message in messages %}
+              <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}
+        {% endblock %}
+
+    </body>
+</html>

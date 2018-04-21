@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method='POST' action='/'><table>
+    <tr>
+        <td>
+            <label>Search by:
+                    <select name="category">
+                        <option value="keyword" default>Keyword</option>
+                        <option value="title">Title</option>
+                        <option value="subject">Subject</option>
+                        <option value="author">Author</option>
+                    </select>
+            </label>
+        </td>
+        <td>
+            * Note: Not all libraries except all search types
+        </td>
+        <label>Search:
+            <input name="query" type="text" />
+        </label>
+         </td>
+         <td>
+       
+        </td> 
+    </tr>
+</table>
+<table>
+<!--send library name object   -->
+        <tr>
+            {% for library in library_table %} 
+            <td>
+            {{loop.index}}
+        <label>
+            <input type="checkbox" name="{{library.id}}" value="{{library.library_name}}" />{{library}}
+        </label>
+            </td>
+            {% if loop.index is divisibleby 4 %}
+            </tr><tr>
+            {% endif %}
+        {% endfor %}
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" />
+            </td>
+        </tr>
+        <script> 
+        function toggle(source) {
+            checkboxes = document.getElementsByName('library');
+            for(var i=0, n=checkboxes.length;i<n;i++) {
+              checkboxes[i].checked = source.checked;
+            }
+          }
+        </script> 
+        
+        
+</table>
+</form>
+
+{% endblock %}
+
+
