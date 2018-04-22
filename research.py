@@ -81,3 +81,21 @@ d = subject
 X = keyword
 
 "http://bridges.searchmobius.org/search/?searchtype={1}&SORT=D&searcharg={0}&searchscope={2}".format(query, SearchType, which_library))
+
+
+
+                    
+if not checked_boxes:
+            flash("You need to select a library")
+            return redirect('/')
+
+#        else:
+#            flash("Please enter a serch term", category="error")   
+               
+        if request.form['library']:
+            list_of_checkedboxes = []
+            for n in len(library_table)+1:
+                if request.form.get[n]:
+                    list_of_checkedboxes = list_of_checkedboxes.append(n) #this should be giving me library.id of the ones checked
+        else:
+            flash("Please check at least one library", category="error")

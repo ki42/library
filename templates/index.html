@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form method='POST' action='/'><table>
+<form method='POST' action='/'>
+    <table>
     <tr>
         <td>
             <label>Search by:
@@ -16,13 +17,11 @@
         <td>
             * Note: Not all libraries except all search types
         </td>
-        <label>Search:
+        <td>
+        <label>Search for:
             <input name="query" type="text" />
         </label>
          </td>
-         <td>
-       
-        </td> 
     </tr>
 </table>
 <table>
@@ -30,9 +29,9 @@
         <tr>
             {% for library in library_table %} 
             <td>
-            {{loop.index}}
+            {{loop.index}})
         <label>
-            <input type="checkbox" name="{{library.id}}" value="{{library.library_name}}" />{{library}}
+            <input type="checkbox" name="library" value="{{library.id}}" />{{library.library_name}}
         </label>
             </td>
             {% if loop.index is divisibleby 4 %}
@@ -45,14 +44,7 @@
                 <input type="submit" />
             </td>
         </tr>
-        <script> 
-        function toggle(source) {
-            checkboxes = document.getElementsByName('library');
-            for(var i=0, n=checkboxes.length;i<n;i++) {
-              checkboxes[i].checked = source.checked;
-            }
-          }
-        </script> 
+
         
         
 </table>
