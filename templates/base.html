@@ -18,8 +18,8 @@
               <input type="submit" value="Log Out" />
             </form>
           {% else %}
-            
-            <form>
+            <a href ="/contact">Libraries' contact</a>
+            <form action="/register" method="post" id='login'>
               <table>
               <tr>
                     <td>Would you like to view saved searches?
@@ -36,6 +36,9 @@
                     <td class="error">{{password_error}}
                     </td>  
                      <td class="error"> {{username_error}}
+                    </td>
+                    <td>
+                      <input type="submit" value="Sign in" />
                     </td>
                   </table>
             </form>

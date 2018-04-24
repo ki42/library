@@ -99,3 +99,8 @@ if not checked_boxes:
                     list_of_checkedboxes = list_of_checkedboxes.append(n) #this should be giving me library.id of the ones checked
         else:
             flash("Please check at least one library", category="error")
+
+
+#for contact table
+
+

@@ -1,4 +1,5 @@
 from app import db
+from hashutils import make_pw_hash
 
 class Library(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,12 +39,12 @@ class Categories(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user = db.Column(db.String(120), unique=True)
-    password = db.Column(db.String(120))
+    pw_hash = db.Column(db.String(120))
     entries = db.relationship('SearchHistory', backref='owner')
     
     def __init__(self, user, password):
         self.user = user
-        self.password = password
+        self.pw_hash = make_pw_hash(password)
     
     def __repr__(self):
         return '<User %r>' % self.user
@@ -60,6 +61,28 @@ class SearchHistory(db.Model):
         self.category = category
         self.entry = entry
         self.libraries = libraries
+        self.owner = owner
+
+    def __repr__(self):
+        return '<history %r>' % self.entry
+
+#Without destroying the database, can I add a table that holds the library location information
+
+class LAddresses(db.Model):      #SyntaxError: keyword can't be an expression
+    id = db.Column(db.Integer, primary_key=True)
+    street = db.Column(db.String(100))
+    city = db.Column(db.String(40))
+    zipcode = db.Column(db.String(10))
+    email = db.Column(db.String(40))
+    phone = db.Column(db.String(11)) #10 +1
+    owner_id = db.Column(db.Integer, db.ForeignKey('library.id'))
+    
+    def __init__(self, street, city, zipcode, email, phone, owner):
+        self.street = street
+        self.city = city
+        self.zipcode = zipcode
+        self.email = email
+        self.phone = phone
         self.owner = owner
 
     def __repr__(self):

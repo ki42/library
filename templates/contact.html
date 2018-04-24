@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Contact information</h1>
+    <table>
+        {% for contact in libraryAdd %} 
+        <tr><td><h2><a href="googlemaps..... or ">{{contact.name}}</a></h2></td></tr> 
+        <tr><td><p>{{contact.street}}<br>
+            {{contact.city}}, {{contact.zipcode}}<br>
+            {{contact.email}}<br> /* can you add an email mailto: handler ?*/
+            {{contact.phone}}<br>
+            <br></td>
+        </tr>
+        <tr><td>
+        <hr></hr></td></tr>
+        {% endfor %}
+        
+</table>
+</form>
+
+{% endblock %}
