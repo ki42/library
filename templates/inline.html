@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+
+{% block inline %}
+<table><tr><td>
+        {% for i in {{list_of_urls}} %}
+    <div> 
+        <object type="text/html" data="{0}".format(i) width="800px" height="600px" style="overflow:auto;border:5px ridge blue">
+            </object>
+    </div> </tr>  </td> 
+        {% endfor %}
+</table>
+{% endblock %}
+
+
+
+
+
+     

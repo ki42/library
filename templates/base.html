@@ -26,7 +26,7 @@
                 <label>Username</label>
                     </td>
                      <td>
-                     <input name="username" type="text" value='{{username}}' />
+                     <input name="user" type="text" value='{{user}}' />
                     <td><label>Password</label>
                     </td>
                     <td>
@@ -58,6 +58,12 @@
         {% endwith %}
 
         {% block content %}
+        {% endblock %}
+
+        {% block inline %}
+        {% endblock %}
+
+        {% block contact %}
         {% endblock %}
 
     </body>

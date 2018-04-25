@@ -68,7 +68,7 @@ class SearchHistory(db.Model):
 
 #Without destroying the database, can I add a table that holds the library location information
 
-class LAddresses(db.Model):      #SyntaxError: keyword can't be an expression
+class LibraryContact(db.Model):      
     id = db.Column(db.Integer, primary_key=True)
     street = db.Column(db.String(100))
     city = db.Column(db.String(40))

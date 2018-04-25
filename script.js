@@ -15,4 +15,7 @@ function Hello() {
    }
  </script> 
 
+
+ window.open(url,'_blank');
+
  to_do = """<script>window.open('"https://slpl.bibliocommons.com/v2/search?query={0}&searchType={1}".format(query, kind)', '_blank');</script>"""
