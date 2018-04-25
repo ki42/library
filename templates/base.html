@@ -13,12 +13,11 @@
         
         <div style='float: right'>
           {% if 'user' in session %}
-            {{ session['user'] }}
+            <div>Hello, {{ session['user'] }}</div>
             <form action="/logout" method="post" id='logout'>
               <input type="submit" value="Log Out" />
             </form>
           {% else %}
-            <a href ="/contact">Libraries' contact</a>
             <form action="/register" method="post" id='login'>
               <table>
               <tr>
@@ -47,15 +46,16 @@
         <h1>
             Saint Louis Libary Search Engine
         </h1>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <ul class=flashes>
-              {% for message in messages %}
-              <li>{{ message }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class=flashes>
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+    </ul>
+           {% endif %}
+          {% endwith %}
+  
 
         {% block content %}
         {% endblock %}

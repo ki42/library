@@ -6,7 +6,6 @@ from models import Library, Categories, User, SearchHistory
 from hashutils import check_pw_hash
 
 app.secret_key = 'kdjiong395yr1nlkern'
-session = []
 
 @app.route("/",  methods =['POST', 'GET'])
 def search():	
@@ -24,12 +23,14 @@ def search():
         if request.form['query']:               #did my user type in a query?
             query = cgi.escape(request.form['query'])
         else:                                   #query empty:
-            flash("Please enter a serch term", category="error")   
+            query = ''
+            flash("Please enter a serch term", category ="error")   
             query_error = "error"
                
         if request.form['library']:             #did my user type in a library?
             list_of_checkedboxes = request.form.getlist('library')
-        else:                                   #library unchecked:
+        else: 
+            list_of_checkedboxes = ''                                  #library unchecked: #is creating 404, don't know why
             flash("Please check at least one library", category="error")
             checkbox_error = "error"
 
@@ -57,11 +58,11 @@ def search():
 # library handler:      #still in the for loop.                     
                 if entry.owner_id == 1: #SLPL    
                     list_of_urls.append("https://slpl.bibliocommons.com/v2/search?query={0}&searchType={1}".format(query, kind))
-                if entry.owner_id == 2:  #Municipal Public Libraries
-                    list_of_urls.append("http://pac.mlc.lib.mo.us/polaris/search/searchresults.aspx?ctx={2}.1033.0.0.1&type=Keyword&term={0}&by={1}&sort=RELEVANCE&limit=TOM=*&query=&page=0".format(query, kind, entry.consortium_id))
-                if entry.owner_id == 3: #SLCL
+                if entry.owner_id == 2: #SLCL
                     list_of_urls.append("http://encore.slcl.org/iii/encore/search?formids=target&lang=eng&suite=def&reservedids=lang%2Csuite&submitmode=&submitname=&target={0}".format(query))
-
+                if entry.owner_id == 3:  #Municipal Public Libraries
+                    list_of_urls.append("http://pac.mlc.lib.mo.us/polaris/search/searchresults.aspx?ctx={2}.1033.0.0.1&type=Keyword&term={0}&by={1}&sort=RELEVANCE&limit=TOM=*&query=&page=0".format(query, kind, entry.consortium_id))
+                
 # we exit the for loop:
 
 #the libary_string created in the for loop isn't being returned to be able to handle the session commit.
@@ -95,10 +96,11 @@ def search():
         else:                #it had a user submission error                          
             return render_template("index.html",    
                 query=query,
-                body=body,
-                query_error = query_error,    #I am not sure I have to pass these, they are flash messages
-                checkbox_error = body_error
-                            ) 
+                library_table = library_table,
+                query_error = query_error,    
+                checkbox_error = checkbox_error,
+                list_of_checkedboxes = list_of_checkedboxes
+                ) 
  
 
                 
@@ -115,17 +117,17 @@ def register():
             user_object = User(user=user, password=password) #the hash happens in models.py
             db.session.add(user_object)
             db.session.commit()
-            session['user'] = user_object.user
+            session['user'] = user
             flash('New User created')
-            return redirect("/")   #this might need to be a template re-render....
+            return redirect("/", code="303")  #this might need to be a template re-render....
         if users.count() == 1:
             user = users.first() #double check, you have just one entry, right and it is not the user object
             if check_pw_hash(password, user.pw_hash):
-                session['user'] = user.user
-                flash('welcome back, '+user.email)
-                return redirect("/")          #I need to pass something here so the form knows how to deal
-        flash('Password incorrect for this username')
-        return redirect("/")
+                session['user'] = user
+                flash('Welcome back, '+user)
+                return redirect("/", code="303")          #I need to pass something here so the form knows how to deal
+        flash('Password incorrect for this username', 'error')
+        return redirect("/", code="303")
 
 #           flash("user + '" is already taken and password reminders are not implemented')
 #            return redirect('/register')
@@ -135,6 +137,11 @@ def register():
 #            return redirect('/register')
 
 #end user/pass dealing with
+@app.route('/logout', methods=['POST'])
+def logout():
+    del session['user'] #delete username from session
+    flash("You have been logged out")#Just for me, flash message that "You have been logged out" ?
+    return redirect("/", code="303")  
 
 @app.route("/contact", methods=['GET', 'POST'])
 def contact():

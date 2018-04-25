@@ -66,8 +66,6 @@ class SearchHistory(db.Model):
     def __repr__(self):
         return '<history %r>' % self.entry
 
-#Without destroying the database, can I add a table that holds the library location information
-
 class LibraryContact(db.Model):      
     id = db.Column(db.Integer, primary_key=True)
     street = db.Column(db.String(100))
