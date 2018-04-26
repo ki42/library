@@ -50,11 +50,7 @@ def search():
                         kind = i.subject
                     if cat == 'author':
                         kind = i.author
-                if session:  #not done (check the session for a user name before trying to store data)  
-                    library_string = ''.join(j + ',') #create the libary string with each for loop, commit later:
-                    #it is not seeing this variable outside of the loop. and I still need to commit it.
-
-
+               
 # library handler:      #still in the for loop.                     
                 if entry.owner_id == 1: #SLPL    
                     list_of_urls.append("https://slpl.bibliocommons.com/v2/search?query={0}&searchType={1}".format(query, kind))
@@ -63,17 +59,43 @@ def search():
                 if entry.owner_id == 3:  #Municipal Public Libraries
                     list_of_urls.append("http://pac.mlc.lib.mo.us/polaris/search/searchresults.aspx?ctx={2}.1033.0.0.1&type=Keyword&term={0}&by={1}&sort=RELEVANCE&limit=TOM=*&query=&page=0".format(query, kind, entry.consortium_id))
                 
+                
 # we exit the for loop:
+            if session:     #store my search history
+                user = session['user']
+                users = User.query.filter_by(user=user).first()
+                library_string = ''
+                for m in list_of_checkedboxes:                #these lines aren't storing to the database properly.
+                    string = library_string.join(m + ',')
+                owner = users.id
+                search = SearchHistory(kind, query, string, users) 
+                db.session.add(search)
+                db.session.commit()  
+                my_searches = SearchHistory.query.filter_by(owner_id = owner).all()
+                
+                if my_searches:            
+                    lib_names =[]
+                    for n in my_searches:
+                        list_libraries = [x.strip() for x in n.libraries.split(',')]
+                        for j in list_libraries:
+                            each_lib_names =[]
+                            for library in library_table:
+                                if j == library.id:
+                                    lib_names = lib_names.append(library.name) #this has only worked for one entry.
+                            each_lib_names = each_lib_names.append(lib_names)
 
-#the libary_string created in the for loop isn't being returned to be able to handle the session commit.
-#figure out how to create it in the loop and only submit it after it finishes, without returning and breaking the current pretty loop. 
-#it was nested with it's own loop, but that means it's loop would run for every library submitted... 
 
-#           if library_string:    #There was a user logged in and it got created.
-#               #TODO owner needs to come out of the session
-#                search = SearchHistory(kind, query, library_string, owner) 
-#                db.session.add(search)
-#               db.session.commit()  
+            if request.form['view'] == 'inline': 
+                inline = request.form['view']
+                return render_template('index.html', 
+                    list_of_urls = list_of_urls, 
+                    inline= inline,
+                    library_table = library_table,
+                    category = cat,
+                    query = query, 
+                    my_searches = my_searches,
+                    each_lib_names = each_lib_names
+                        )
 
 #            if request.form['view'] == 'tab':
 #                for i list_of_urls:
@@ -86,13 +108,7 @@ def search():
 #                        inline= inline,
 #                        library_table = library_table))   #this should be a for loop redirect. 
 
-            if request.form['view'] == 'inline': #route to tab at the moment - fixt it
-                    inline = request.form['view']
-                    return render_template('index.html', 
-                        list_of_urls = list_of_urls, 
-                        inline= inline,
-                        library_table = library_table)
-    
+
         else:                #it had a user submission error                          
             return render_template("index.html",    
                 query=query,
@@ -101,11 +117,28 @@ def search():
                 checkbox_error = checkbox_error,
                 list_of_checkedboxes = list_of_checkedboxes
                 ) 
+#the libary_string created in the for loop isn't being returned to be able to handle the session commit.
+#figure out how to create it in the loop and only submit it after it finishes, without returning and breaking the current pretty loop. 
+#it was nested with it's own loop, but that means it's loop would run for every library submitted... 
+
+#           if library_string:    #There was a user logged in and it got created.
+#             
+
+@app.route("/delete", methods=['POST'])
+def delete():
+    searchid = request.form['searchid']
+    delete_id = SearchHistory.query.get(searchid)
+    if not delete_id:
+        return redirect("/?error=Attempt to delete a search unknown to this database")
+    db.session.delete(delete_id)
+    db.session.commit()
+    return render_template('index.html')
+
+
+
+            
+        
  
-
-                
-#untested code, needs database reinitialize:
-
 @app.route("/register", methods=['POST'])
 def register():
     if request.method == 'POST':
@@ -123,24 +156,16 @@ def register():
         if users.count() == 1:
             user = users.first() #double check, you have just one entry, right and it is not the user object
             if check_pw_hash(password, user.pw_hash):
-                session['user'] = user
-                flash('Welcome back, '+user)
+                session['user'] = user.user
+                flash('Welcome back, '+ user.user)
                 return redirect("/", code="303")          #I need to pass something here so the form knows how to deal
         flash('Password incorrect for this username', 'error')
         return redirect("/", code="303")
 
-#           flash("user + '" is already taken and password reminders are not implemented')
-#            return redirect('/register')
-#if you have a verify password block in your registration page
-#        if password != verify:
-#            flash('passwords did not match')
-#            return redirect('/register')
-
-#end user/pass dealing with
 @app.route('/logout', methods=['POST'])
 def logout():
     del session['user'] #delete username from session
-    flash("You have been logged out")#Just for me, flash message that "You have been logged out" ?
+    flash("You have been logged out")
     return redirect("/", code="303")  
 
 @app.route("/contact", methods=['GET', 'POST'])

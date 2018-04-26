@@ -18,9 +18,13 @@
             * Note: Not all libraries except all search types
         </td>
         <td>
+                
         <label>Search for:
-            <input name="query" type="text" />
-        </label>
+            {% if query %}
+            <input name="query" type="text" value="{{query}}"/>
+            {% else %}
+            <input name="query" type="text" placeholder="Search here" />
+        </label> {% endif %}
          </td>
     </tr>
 </table>
@@ -38,6 +42,7 @@
             </tr><tr>
             {% endif %}
         {% endfor %}
+        <input type="checkbox" onClick="toggle(this)" /> Select All<br/>
         </tr>
         <tr>
             <td>
@@ -52,6 +57,20 @@
             </td>
             </tr>
 
+            <table><tr><td>
+                    {% if my_searches %}
+                        {% for i in my_searches %}
+                    <div> 
+                    <ul>
+                        <li>
+                          <a href="">{{i.category}}{{i.entry}}{{each_lib_names[loop.index0]}}</a> <form method='POST' action='/delete'><input type="hidden" name="searchid" value="{{ i.id }}"/><input type="submit" value="Delete" /></form>
+                        </li>
+                    </ul>
+                    
+                        {% endfor %}
+                    </div></tr>  </td> 
+                        {% endif %}
+                </table>
 
             <table><tr><td>
                 {% if list_of_urls %}
