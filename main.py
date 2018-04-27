@@ -7,12 +7,21 @@ from hashutils import check_pw_hash
 
 app.secret_key = 'kdjiong395yr1nlkern'
 
+# I need library_table globally.
+#I need 
 @app.route("/",  methods =['POST', 'GET'])
 def search():	
     library_table = Library.query.all()
     if request.method == 'GET':
-        return render_template('index.html', 
-            library_table = library_table)
+        if "user" in session:
+            user = session["user"]
+            return render_template('index.html', 
+                library_table = library_table,
+                user = user)
+        else:
+            return render_template('index.html', 
+                library_table = library_table
+                )
  
  
     if request.method == 'POST':
@@ -65,10 +74,10 @@ def search():
                 user = session['user']
                 users = User.query.filter_by(user=user).first()
                 library_string = ''
-                for m in list_of_checkedboxes:                #these lines aren't storing to the database properly.
-                    string = library_string.join(m + ',')
+                for m in list_of_checkedboxes:                
+                    library_string = library_string + m + "."
                 owner = users.id
-                search = SearchHistory(kind, query, string, users) 
+                search = SearchHistory(kind, query, library_string, users) 
                 db.session.add(search)
                 db.session.commit()  
                 my_searches = SearchHistory.query.filter_by(owner_id = owner).all()
@@ -76,14 +85,14 @@ def search():
                 if my_searches:            
                     lib_names =[]
                     for n in my_searches:
-                        list_libraries = [x.strip() for x in n.libraries.split(',')]
+                        list_libraries = [x.strip() for x in n.libraries.split('.')]
                         for j in list_libraries:
                             each_lib_names =[]
                             for library in library_table:
                                 if j == library.id:
                                     lib_names = lib_names.append(library.name) #this has only worked for one entry.
                             each_lib_names = each_lib_names.append(lib_names)
-
+                            
 
             if request.form['view'] == 'inline': 
                 inline = request.form['view']
@@ -121,8 +130,12 @@ def search():
 #figure out how to create it in the loop and only submit it after it finishes, without returning and breaking the current pretty loop. 
 #it was nested with it's own loop, but that means it's loop would run for every library submitted... 
 
-#           if library_string:    #There was a user logged in and it got created.
-#             
+
+#TODO add tab and pills menu
+#TODO add nav bar
+#TODO make it pretty
+#TODO handle delete function
+
 
 @app.route("/delete", methods=['POST'])
 def delete():
@@ -132,9 +145,18 @@ def delete():
         return redirect("/?error=Attempt to delete a search unknown to this database")
     db.session.delete(delete_id)
     db.session.commit()
-    return render_template('index.html')
+    return render_template('/')
 
-
+#@app.route("/searchhistory", methods=['GET'])  #This is new, not working yet. 
+#def searchhistory():
+#    user = session['user']
+#    users = User.query.filter_by(user=user).first()
+#    for m in list_of_checkedboxes:                
+#        library_string = library_string + m + "."
+#    owner = users.id
+#    my_searches = SearchHistory.query.filter_by(owner_id = owner).all()
+#    searchhistory = SearchHistory.query.get()
+ 
 
             
         
@@ -168,14 +190,14 @@ def logout():
     flash("You have been logged out")
     return redirect("/", code="303")  
 
-@app.route("/contact", methods=['GET', 'POST'])
+@app.route("/contact", methods=['GET', 'POST']) #not currently using this handler and it's associated table
 def contact():
     if request.method == 'GET':
         LibraryAdd = LibraryContact.query.join(Library, 
                 Library.id==LibraryContact.owner).add_columns(Library.id, 
                 Library.library_name,
-                LibraryContact.street,   #SyntaxError: keyword can't be an expression
-                LibraryContact.city,         #Look up how to do a proper join again.
+                LibraryContact.street,   
+                LibraryContact.city,         
                 LibraryContact.zipcode,
                 LibraryContact.email,
                 LibraryContact.phone,

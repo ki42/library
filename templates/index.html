@@ -28,6 +28,14 @@
          </td>
     </tr>
 </table>
+<nav>
+<ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="/">Home</a></li>
+        {% if user %}
+        <li role="presentation"><a href="/searchhistory">Search History</a></li>
+        {% endif %}
+      </ul>
+</nav>
 <table>
 <!--send library name object   -->
         <tr>
@@ -57,16 +65,16 @@
             </td>
             </tr>
 
-            <table><tr><td>
+            
                     {% if my_searches %}
+                    <table><tr>
                         {% for i in my_searches %}
-                    <div> 
-                    <ul>
-                        <li>
-                          <a href="">{{i.category}}{{i.entry}}{{each_lib_names[loop.index0]}}</a> <form method='POST' action='/delete'><input type="hidden" name="searchid" value="{{ i.id }}"/><input type="submit" value="Delete" /></form>
-                        </li>
-                    </ul>
-                    
+                        <td>
+                          <a href="">{{loop.index}}) {{i.category}}{{i.entry}}</a><form method='POST' action='/delete'><input type="hidden" name="searchid" value="{{ i.id }}"/><input type="submit" value="Delete" /></form>
+                        </td>
+                    {% if loop.index is divisibleby 5 %}
+                </tr><tr>
+                {% endif %}
                         {% endfor %}
                     </div></tr>  </td> 
                         {% endif %}
@@ -78,7 +86,10 @@
                 <div> 
                     <object type="text/html" data="{{i}}" width="800px" height="600px" style="overflow:auto;border:5px ridge blue">
                         </object>
-                </div> </tr>  </td> 
+                </div>  </td> 
+                {% if loop.index is divisibleby 4 %}
+            </tr><tr>
+            {% endif %}
                     {% endfor %}
                     {% endif %}
             </table>
@@ -94,11 +105,17 @@
                                 <a href="https://www.slcl.org/branches">Saint Louis County Library System</a>
                             </li> 
                             <li> 
-                              <a href="https://www.slcl.org/branches">Saint Louis County Library System</a>
+                              <a href="http://www.mlc-stl.org/find-your-library/">Municipal Library System</a>
                                 </li> 
-                        
-                        
-                        
+                                <li>
+                                <a href="https://bridges.searchmobius.org/">Bridges Library System</a> 
+                                </li>
+                                <li>
+                                <a href="http://catalog.wustl.edu">Washington University Library System</a> 
+                                </li>
+                                <li>
+                                <a href="http://libcat.slu.edu/">Saint Louis University Library System</a> 
+                                </li>
                         
                         </ol>  
 
