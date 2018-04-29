@@ -8,7 +8,39 @@ from hashutils import check_pw_hash
 app.secret_key = 'kdjiong395yr1nlkern'
 
 # I need library_table globally.
-#I need 
+library_table = Library.query.all()
+
+#some helper functions pulled out of my existing code because I need rereuse the variables in other functions. 
+def searchedlibraries():
+    user = session['user']
+    users = User.query.filter_by(user=user).first() #get user line from table.
+    owner_id = users.id
+    all_searches = SearchHistory.query.filter_by(owner_id = owner_id).all()
+    
+    for n in all_searches:       #m should be an object for each search
+        libraries_searched = n.libraries
+        each_library = libraries_searched.split('.')
+        for lib in each_library:
+            library_row = Library.query.filter_by(id = lib).all()
+            list_lib_names = []
+            for i in library_row:
+                library_name = i.library_name
+                list_lib_names = list_lib_names.append(library_name)
+    return [each_library, list_lib_names]  
+
+def searchedcategories():
+    user = session['user']
+    users = User.query.filter_by(user=user).first() #get user line from table.
+    owner_id = users.id
+    all_searches = SearchHistory.query.filter_by(owner_id = owner_id).all() 
+    list_cat_names = []
+    for n in all_searches:       #m should be an object for each search
+        category_searched = n.category
+        category_label = "key_this_test"
+        list_cat_names = list_cat_names.append(category_label)
+    return list_cat_names
+
+
 @app.route("/",  methods =['POST', 'GET'])
 def search():	
     library_table = Library.query.all()
@@ -39,7 +71,7 @@ def search():
         if request.form['library']:             #did my user type in a library?
             list_of_checkedboxes = request.form.getlist('library')
         else: 
-            list_of_checkedboxes = ''                                  #library unchecked: #is creating 404, don't know why
+            list_of_checkedboxes = ''                 #library unchecked: #is creating 404, don't know why
             flash("Please check at least one library", category="error")
             checkbox_error = "error"
 
@@ -145,22 +177,41 @@ def delete():
         return redirect("/?error=Attempt to delete a search unknown to this database")
     db.session.delete(delete_id)
     db.session.commit()
-    return render_template('/')
+    return redirect('/')
 
-#@app.route("/searchhistory", methods=['GET'])  #This is new, not working yet. 
-#def searchhistory():
-#    user = session['user']
-#    users = User.query.filter_by(user=user).first()
-#    for m in list_of_checkedboxes:                
-#        library_string = library_string + m + "."
-#    owner = users.id
-#    my_searches = SearchHistory.query.filter_by(owner_id = owner).all()
-#    searchhistory = SearchHistory.query.get()
- 
+@app.route("/searchhistory", methods=['GET'])  #Display for user
+def show_search():
+    library_num_and_name = searchedlibraries()
+    #list_cat_names = searchedcategories()
+    user = session['user']
+    users = User.query.filter_by(user=user).first()
+    entry = SearchHistory.query.filter_by(owner_id = user).all()
+    query_list = []
+    for o in entry:  #each row
+        entry = o.entry
+        query_list = query_list.append(entry)
+    lib_list_num = []
+    for l in library_num_and_name[0]: #0 is the numbers
+        lib_list_num.append(l)
+    lib_list_names = []
+    for l in library_num_and_name[1]: #1 is the numbers
+        lib_list_names.append(l)
+    return render_template ('searchhistory.html', 
+        lib_list_names = lib_list_names,
+        lib_list_num = lib_list_num,
+        #list_cat_names = list_cat_names,
+        query_list = query_list,
+        entry = entry)
 
-            
-        
- 
+#@app.route("/previous") #When they've clicked on a link to search the history
+#def previous():
+   #turn the previous 
+
+
+#    library_num_and_name = searchhistory()
+#    for l in library_num_and_name[1]:
+      
+
 @app.route("/register", methods=['POST'])
 def register():
     if request.method == 'POST':

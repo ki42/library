@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table><tr>
+
+    {% for i in entry %}
+        <td><a href="">{{loop.index}})&nbsp; {{i.category}}&nbsp;{{i.entry}}</a><form method='POST' action='/delete'><input type="hidden" name="searchid" value="{{ i.id }}"/><input type="submit" value="Delete" /></form>
+            </td>
+    {% endfor %}
+    </div></tr>  </td> 
+    
+    </table>
+
+{% endblock %}

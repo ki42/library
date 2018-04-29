@@ -2,7 +2,7 @@
 
 {% block content %}
 <form method='POST' action='/'>
-    <table>
+<table>
     <tr>
         <td>
             <label>Search by:
@@ -14,20 +14,22 @@
                     </select>
             </label>
         </td>
-        <td>
-            * Note: Not all libraries except all search types
-        </td>
-        <td>
-                
-        <label>Search for:
-            {% if query %}
-            <input name="query" type="text" value="{{query}}"/>
-            {% else %}
-            <input name="query" type="text" placeholder="Search here" />
-        </label> {% endif %}
+         <td>      
+            <label>Search for:
+                {% if query %}
+                    <input name="query" type="text" value="{{query}}"/>
+                {% else %}
+                    <input name="query" type="text" placeholder="Search here" />
+                {% endif %}
+            </label> 
          </td>
     </tr>
+    <tr>
+        <td> * Note: Not all libraries except all search types</td>
+    </tr>
+        <tr><td></td></tr>
 </table>
+
 <nav>
 <ul class="nav nav-tabs">
         <li role="presentation" class="active"><a href="/">Home</a></li>
@@ -36,6 +38,7 @@
         {% endif %}
       </ul>
 </nav>
+
 <table>
 <!--send library name object   -->
         <tr>
@@ -123,12 +126,7 @@
 
                     </div> </tr>  </td> 
                 </table>
-
-
-
-
-
-            
+       
 </table>
 </form>
 
