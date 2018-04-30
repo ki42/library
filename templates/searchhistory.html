@@ -1,14 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-<table><tr>
+<div class="search"> 
+<table class="searchhis">
 
-    {% for i in entry %}
-        <td><a href="">{{loop.index}})&nbsp; {{i.category}}&nbsp;{{i.entry}}</a><form method='POST' action='/delete'><input type="hidden" name="searchid" value="{{ i.id }}"/><input type="submit" value="Delete" /></form>
-            </td>
+    {% for i in range(all_searches|length) %}
+    <tr><td><div id="outer">
+            <div class="inner">
+                <form method='POST' action="/delete">
+                <input type="hidden" name="searchid" value="{{all_searches[i]}}"/>
+                <input type="submit" value="Delete"/></form>
+            </div>
+            <div class="inner">
+                <form method='POST' action='/'>
+                <input type="hidden" name="category" value="{{all_searches[i].category}}"/>
+                <input type="hidden" name="query" value="{{all_searches[i].entry}}"/>
+                 {% for j in range(num_list[i]|length) %}
+                    <input type="hidden" name="lib" value="{{num_list[i][j]}}"/>   
+                 {% endfor %}
+                <input type="submit" value="Search Again" /></form>
+            </div>
+            <div class="inner">
+                {{loop.index}})&nbsp; {{all_searches[i].category}}&nbsp;{{all_searches[i].entry}}&nbsp;{{name_list[i]}}
+            </div>
+            
+        </div></td> </tr>
     {% endfor %}
-    </div></tr>  </td> 
+    </div> 
     
     </table>
-
+</div>
 {% endblock %}

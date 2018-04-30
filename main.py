@@ -12,33 +12,39 @@ library_table = Library.query.all()
 
 #some helper functions pulled out of my existing code because I need rereuse the variables in other functions. 
 def searchedlibraries():
-    user = session['user']
+    user = session['user'] #who's logged in?
     users = User.query.filter_by(user=user).first() #get user line from table.
-    owner_id = users.id
-    all_searches = SearchHistory.query.filter_by(owner_id = owner_id).all()
-    
-    for n in all_searches:       #m should be an object for each search
-        libraries_searched = n.libraries
-        each_library = libraries_searched.split('.')
-        for lib in each_library:
-            library_row = Library.query.filter_by(id = lib).all()
-            list_lib_names = []
-            for i in library_row:
-                library_name = i.library_name
-                list_lib_names = list_lib_names.append(library_name)
-    return [each_library, list_lib_names]  
+    owner_id = users.id  #get the user id
+    all_searches = SearchHistory.query.filter_by(owner_id = owner_id).all() #get all of the search histories for that owner
+    list_lib_names = []
+    searched = []
+    for n in all_searches:       #n should be an object for each search
+        libraries_searched = n.libraries        # libraries searched is holding the string of lib numbers
+        each_library = libraries_searched.split('.')  #split them into a list
+        searched.append(each_library)   #now store that nested list in another list
+    for j in searched: #for each row of lib
+        temp_inner_list = []
+        for lib in j: #for each lib in the search
+            library_row = Library.query.filter_by(id = lib).first()  #get it's libary row from the table
+            library_name = library_row.library_name
+            temp_inner_list.append(library_row.library_name) #get it's library name and append it to a list. 
+               #build the list with each entry with separate nested list
+        list_lib_names.append(temp_inner_list)
+    return [searched, list_lib_names] 
 
-def searchedcategories():
-    user = session['user']
-    users = User.query.filter_by(user=user).first() #get user line from table.
-    owner_id = users.id
-    all_searches = SearchHistory.query.filter_by(owner_id = owner_id).all() 
-    list_cat_names = []
-    for n in all_searches:       #m should be an object for each search
-        category_searched = n.category
-        category_label = "key_this_test"
-        list_cat_names = list_cat_names.append(category_label)
-    return list_cat_names
+
+
+
+# def searchedcategories():
+#    users = User.query.filter_by(user=user).first() #get user line from table.
+#    owner_id = users.id
+#    all_searches = SearchHistory.query.filter_by(owner_id = owner_id).all() 
+#    list_cat_names = []
+#    for n in all_searches:       #m should be an object for each search
+#        category_searched = n.category
+#        category_label = "key_this_test"
+#        list_cat_names = list_cat_names.append(category_label)
+#    return list_cat_names
 
 
 @app.route("/",  methods =['POST', 'GET'])
@@ -54,12 +60,12 @@ def search():
             return render_template('index.html', 
                 library_table = library_table
                 )
- 
- 
+        
     if request.method == 'POST':
         cat = request.form['category']     #I have set a default, there will always be a cat
         query_error = ''
         checkbox_error =''
+        list_of_checkedboxes = []
        
         if request.form['query']:               #did my user type in a query?
             query = cgi.escape(request.form['query'])
@@ -67,19 +73,24 @@ def search():
             query = ''
             flash("Please enter a serch term", category ="error")   
             query_error = "error"
-               
-        if request.form['library']:             #did my user type in a library?
-            list_of_checkedboxes = request.form.getlist('library')
-        else: 
-            list_of_checkedboxes = ''                 #library unchecked: #is creating 404, don't know why
-            flash("Please check at least one library", category="error")
-            checkbox_error = "error"
 
-        if not query_error and not checkbox_error :  #this passes if the strings stay empty
+        if request.form.getlist('lib'):   
+            list_of_checkedboxes = request.form.getlist('lib')
+
+        else:
+ #       if request.form['library']:             #did my user check a library?
+            if list_of_checkedboxes == []:
+                list_of_checkedboxes = request.form.getlist('library')
+            else: 
+                flash("Please check at least one library", category="error")
+                checkbox_error = "error"
+                return redirect("/")
+            
+        if not query_error and not checkbox_error:  #this passes if the strings stay empty
             list_of_urls = []   
             for j in list_of_checkedboxes: #loop through library.id checked  
-                
-                entry = Library.query.filter_by(id = j).first()  #get me the library entry line        
+                entry = Library.query.filter_by(id = j).first()  #get me the library entry line 
+                print(entry)       
                 forkey = entry.owner_id                     #some libraries need their key
                 their = Categories.query.filter_by(id = forkey).all()
                 for i in their:                             #each library needs it's own query set up right. 
@@ -99,17 +110,25 @@ def search():
                     list_of_urls.append("http://encore.slcl.org/iii/encore/search?formids=target&lang=eng&suite=def&reservedids=lang%2Csuite&submitmode=&submitname=&target={0}".format(query))
                 if entry.owner_id == 3:  #Municipal Public Libraries
                     list_of_urls.append("http://pac.mlc.lib.mo.us/polaris/search/searchresults.aspx?ctx={2}.1033.0.0.1&type=Keyword&term={0}&by={1}&sort=RELEVANCE&limit=TOM=*&query=&page=0".format(query, kind, entry.consortium_id))
-                
-                
+                if entry.owner_id == 4: #Washington University
+                    list_of_urls.append("http://catalog.wustl.edu/search/a?searchtype={1}&searcharg={0}&SORT=D".format(query, kind))
+                if entry.owner_id == 5: #SLU
+                    list_of_urls.append("http://libcat.slu.edu/search/?searchtype={1}&SORT=D&searcharg={0}&searchscope=5".format(query, kind))
+                if entry.owner_id == 6: #Bridges
+                    list_of_urls.append("http://bridges.searchmobius.org/search/?searchtype={1}&SORT=D&searcharg={0}&searchscope={2}".format(query, kind, entry.consortium_id))
+
+
+
 # we exit the for loop:
-            if session:     #store my search history
+            if session and not request.form.getlist('lib'):     #store my search history
                 user = session['user']
                 users = User.query.filter_by(user=user).first()
                 library_string = ''
                 for m in list_of_checkedboxes:                
                     library_string = library_string + m + "."
                 owner = users.id
-                search = SearchHistory(kind, query, library_string, users) 
+                library_string = library_string.rstrip('.')
+                search = SearchHistory(cat, query, library_string, users) 
                 db.session.add(search)
                 db.session.commit()  
                 my_searches = SearchHistory.query.filter_by(owner_id = owner).all()
@@ -125,6 +144,13 @@ def search():
                                     lib_names = lib_names.append(library.name) #this has only worked for one entry.
                             each_lib_names = each_lib_names.append(lib_names)
                             
+
+            if request.form.getlist('lib'): #if the search is being returned, it doesn't have inline/view
+                return render_template('index.html', 
+                    list_of_urls = list_of_urls, 
+                    library_table = library_table,
+                    category = cat,
+                    query = query)
 
             if request.form['view'] == 'inline': 
                 inline = request.form['view']
@@ -174,10 +200,10 @@ def delete():
     searchid = request.form['searchid']
     delete_id = SearchHistory.query.get(searchid)
     if not delete_id:
-        return redirect("/?error=Attempt to delete a search unknown to this database")
+        return redirect("tab")
     db.session.delete(delete_id)
     db.session.commit()
-    return redirect('/')
+    return redirect('inline')
 
 @app.route("/searchhistory", methods=['GET'])  #Display for user
 def show_search():
@@ -185,23 +211,16 @@ def show_search():
     #list_cat_names = searchedcategories()
     user = session['user']
     users = User.query.filter_by(user=user).first()
-    entry = SearchHistory.query.filter_by(owner_id = user).all()
-    query_list = []
-    for o in entry:  #each row
-        entry = o.entry
-        query_list = query_list.append(entry)
-    lib_list_num = []
-    for l in library_num_and_name[0]: #0 is the numbers
-        lib_list_num.append(l)
-    lib_list_names = []
-    for l in library_num_and_name[1]: #1 is the numbers
-        lib_list_names.append(l)
-    return render_template ('searchhistory.html', 
-        lib_list_names = lib_list_names,
-        lib_list_num = lib_list_num,
-        #list_cat_names = list_cat_names,
-        query_list = query_list,
-        entry = entry)
+
+    all_searches = SearchHistory.query.filter_by(owner_id = users.id).all()
+    name_list = library_num_and_name[1] 
+    num_list = library_num_and_name[0]   #get me just the two nested lists of lib numbers. 
+    return render_template ('searchhistory.html', #   TODO what does searchhistory need to function?
+        all_searches = all_searches,
+        name_list = name_list,
+        num_list = num_list,
+        library_table = library_table)         
+
 
 #@app.route("/previous") #When they've clicked on a link to search the history
 #def previous():

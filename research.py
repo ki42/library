@@ -61,18 +61,17 @@ return redirect("http://libcat.slu.edu/search/?searchtype={1}&SORT=D&searcharg={
 
 
 #Bridges
-All Bridges Libraries = 10
-Concordia Seminary 
-Covenant Seminary 
-Fontbonne University 
-Harris-Stowe State University
-Kenrick-Glennon Seminary 
-Lindenwood University 
-Logan University
-Maryville University 
-Missouri Baptist University 
-Webster University 
-Eden Seminary
+All Bridges Libraries - 10
+Concordia Seminary - 11
+Covenant Seminary - 1
+Fontbonne University - 2
+Harris-Stowe State University - 3
+Kenrick-Glennon Seminary - 4 
+Lindenwood University - 5
+Logan University - 6
+Maryville University - 7
+Missouri Baptist University - 8
+Webster University & Eden Seminary - 9
 
 
 t = title
@@ -80,7 +79,7 @@ a = author
 d = subject
 X = keyword
 
-"http://bridges.searchmobius.org/search/?searchtype={1}&SORT=D&searcharg={0}&searchscope={2}".format(query, SearchType, which_library))
+"http://bridges.searchmobius.org/search/?searchtype={1}&SORT=D&searcharg={0}&searchscope={2}".format(query, kind, which_library))
 
 
 
@@ -104,3 +103,88 @@ if not checked_boxes:
 #for contact table
 
 
+
+ {% if my_searches %}
+                    <table><tr>
+                        {% for i in my_searches %}
+                        <td>
+                          <a href="">{{loop.index}}) {{i.category}}{{i.entry}}</a>
+                        </td>
+                    {% if loop.index is divisibleby 5 %}
+                </tr><tr>
+                {% endif %}<form method='POST' action='/delete'><input type="hidden" name="searchid" value="{{ i.id }}"/><input type="submit" value="Delete" /></form>
+                        {% endfor %}
+                    </div></tr>  </td> 
+                        {% endif %}
+                </table>
+
+{{all_searches[i].id}}
+
+<form method='POST' action='/'>
+<table>
+    <tr>
+        <td>
+            <label>Search by:
+                    <select name="category">
+                        <option value="keyword" default>Keyword</option>
+                        <option value="title">Title</option>
+                        <option value="subject">Subject</option>
+                        <option value="author">Author</option>
+                    </select>
+            </label>
+        </td>
+         <td>      
+            <label>Search for:
+                {% if query %}
+                    <input name="query" type="text" value="{{query}}"/>
+                {% else %}
+                    <input name="query" type="text" placeholder="Search here" />
+                {% endif %}
+            </label> 
+         </td>
+    </tr>
+    <tr>
+        <td> * Note: Not all libraries except all search types</td>
+    </tr>
+        <tr><td></td></tr>
+</table>
+
+<nav>
+<ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="/">Home</a></li>
+        {% if user %}
+        <li role="presentation"><a href="/searchhistory">Search History</a></li>
+        {% endif %}
+      </ul>
+</nav>
+
+<table>
+<!--send library name object   -->
+        <tr>
+            {% for library in library_table %} 
+            <td>
+            {{loop.index}})
+        <label>
+            <input type="checkbox" name="library" value="{{library.id}}" />{{library.library_name}}
+        </label>
+            </td>
+            {% if loop.index is divisibleby 4 %}
+            </tr><tr>
+            {% endif %}
+        {% endfor %}
+        <input type="checkbox" onClick="toggle(this)" /> Select All<br/>
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                For development purposes only:<br>
+                        <input type="radio" name="view" value="tab"> Tab format<br>
+                        <input type="radio" name="view" value="inline" checked> Inline<br>
+            </td>
+            </tr>
+
+            {% for j in range(num_list[i]|length) %}

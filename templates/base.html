@@ -4,7 +4,30 @@
         <title>Saint Louis Libary Search Engine</title>
         <style type="text/css">
             .error {
-                color: red;
+                color: red;   
+            }
+            .theme {
+              background:url(../images/bgimage.jpg);
+              background-repeat:no-repeat;
+              background-position:center center;
+              background-size: cover;
+            }
+            .searchhis {
+              table-layout: auto;
+              width: 80%;
+              align-self: center;
+            }
+            #outer{
+              width:100%;
+              text-align: left;
+              padding-left: 1em
+              }
+            .inner
+              {
+              display: inline-block;
+              }
+            body{
+              padding: 3em
             }
         </style>
 <!-- Latest compiled and minified CSS -->
@@ -31,7 +54,7 @@
              </script>
     </head>
     <body>      
-                <!-- Collect the nav links, forms, and other content for toggling -->
+                <!-- Collect the nav links, forms, and other content for toggling 
               
                 <div class="navbar navbar-expand-lg navbar-dark bg-primary" id="bs-example-navbar-collapse-1">
                   <ul class="nav navbar-nav">
@@ -39,19 +62,16 @@
                           <img alt="Brand" src="...">
                         </a>
                     <li class="active" id="navbarColor01"><a href="/">Home <span class="sr-only">(current)</span></a></li>
-                    <li class="dropdown">
-                      <a href="/" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Contact information<span class="caret"></span></a>
+                    <li class=".dropdown-menu">
+                      <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Contact information
+                        <span class="caret"></span></button>
                       <ul class="dropdown-menu">
-                        <li><a href="https://slpl.bibliocommons.com/locations">Saint Louis Public Library System</a></li>
-                        <li><a href="https://www.slcl.org/branches">Saint Louis County Library System</a></li>
-                        <li><a href="http://www.mlc-stl.org/find-your-library/">Municipal Library System</a></li>
-                        <li><a href="https://bridges.searchmobius.org/">Bridges Library System</a></li>
-                        <li><a href="http://catalog.wustl.edu">Washington University Library System</a></li>
-                        <li><a href="http://libcat.slu.edu/">Saint Louis University Library System</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">One more separated link</a></li>
+                        <li role="presentation"><a href="https://slpl.bibliocommons.com/locations">Saint Louis Public Library System</a></li>
+                        <li role="presentation"><a href="https://www.slcl.org/branches">Saint Louis County Library System</a></li>
+                        <li role="presentation"><a href="http://www.mlc-stl.org/find-your-library/">Municipal Library System</a></li>
+                        <li role="presentation"><a href="https://bridges.searchmobius.org/">Bridges Library System</a></li>
+                        <li role="presentation"><a href="http://catalog.wustl.edu">Washington University Library System</a></li>
+                        <li role="presentation"><a href="http://libcat.slu.edu/">Saint Louis University Library System</a></li>
                       </ul>
                     </li>
                   </ul>
@@ -79,42 +99,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
         <div style='float: right'>
           {% if 'user' in session %}
             <div>Hello, {{ session['user'] }}</div>
@@ -159,7 +143,81 @@
     </ul>
            {% endif %}
           {% endwith %}
-  
+
+          <form method='POST' action='/'>
+            <table>
+                <tr>
+                    <td>
+                        <label>Search by:
+                                <select name="category">
+                                    <option value="keyword" default>Keyword</option>
+                                    <option value="title">Title</option>
+                                    <option value="subject">Subject</option>
+                                    <option value="author">Author</option>
+                                </select>
+                        </label>
+                    </td>
+                     <td>      
+                        <label>Search for:
+                            {% if query %}
+                                <input name="query" type="text" value="{{query}}"/>
+                            {% else %}
+                                <input name="query" type="text" placeholder="Search here" />
+                            {% endif %}
+                        </label> 
+                     </td>
+                </tr>
+                <tr>
+                    <td> * Note: Not all libraries except all search types</td>
+                </tr>
+                    <tr><td></td></tr>
+            </table>
+            
+            <nav>
+            <ul class="nav nav-tabs">
+                    {% if all_searches %}
+                    <li role="presentation" ><a href="/">Home</a></li>
+                    {% if 'user' in session %}
+                    <li role="presentation" class="active"><a href="/searchhistory">Search History</a></li>
+                    {% endif %}
+                    {% else %}
+                    <li role="presentation" class="active" ><a href="/">Home</a></li>
+                    {% if 'user' in session %}
+                    <li role="presentation" ><a href="/searchhistory">Search History</a></li>
+                    {% endif %}
+                    {% endif %}
+                  </ul>
+            </nav>
+            
+            <table>
+            <!--send library name object   -->
+                    <tr>
+                        {% for library in library_table %} 
+                        <td>
+                        {{loop.index}})
+                    <label>
+                        <input type="checkbox" name="library" value="{{library.id}}" />{{library.library_name}}
+                    </label>
+                        </td>
+                        {% if loop.index is divisibleby 4 %}
+                        </tr><tr>
+                        {% endif %}
+                    {% endfor %}
+                    <input type="checkbox" onClick="toggle(this)" /> Select All<br/>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="submit" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            For development purposes only:<br>
+                                    <input type="radio" name="view" value="tab"> Tab format<br>
+                                    <input type="radio" name="view" value="inline" checked> Inline<br>
+                        </td>
+                        </tr>
+                        </table>
 
         {% block content %}
         {% endblock %}
