@@ -188,3 +188,24 @@ if not checked_boxes:
             </tr>
 
             {% for j in range(num_list[i]|length) %}
+
+
+<div class="navbar navbar-expand-lg navbar-dark bg-primary" id="bs-example-navbar-collapse-1">
+                  <ul class="nav navbar-nav">
+                    <a class="navbar-brand" href="#">
+                          <img alt="Brand" src="...">
+                        </a>
+                    <li class="active" id="navbarColor01"><a href="/">Home <span class="sr-only">(current)</span></a></li>
+                    <li class=".dropdown-menu">
+                      <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Contact information
+                        <span class="caret"></span></button>
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                            <button type="button" class="btn btn-primary">Primary</button>
+                            <div class="btn-group" role="group">
+                              <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                              <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                <a class="dropdown-item" href="#">Dropdown link</a>
+                                <a class="dropdown-item" href="#">Dropdown link</a>
+                              </div>
+                            </div>
+                          </div>

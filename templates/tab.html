@@ -1,6 +1,17 @@
-{% extends "index.html" %}
+<!DOCTYPE html>
+<html>
+    <head><script type='text/javascript'>
+    (function library (list_of_urls){
+        for(var i = 0; i < list_of_urls.length; i++) {
+           var p = [];
+           p = window.open("{{list_of_urls[i]}}",'').push; 
+           return p 
+        }
 
-
-{% block tab %}
-    <a href="{{slpl}}" target="_blank">Link</a>
-{% endblock %}
+    })
+    </script>
+</head>
+    <body>
+        library();
+    </body>
+</html>

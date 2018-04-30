@@ -1,9 +1,38 @@
 {% extends "base.html" %}
 
-{% block contact %}              this syntax is wrong, fix it later. 
+{% block content %}              
 
-    <h1>Contact information</h1>
-    <table>
+    <table><th>
+        <h4 class ="contact">Who would you like to contact?</h4> <div class="note">* You will be redirected to their site.</div>
+    </th>
+    <td></td></table>
+            <div text-decoration ="none"> 
+                <ol>
+                    <li> 
+                        <a href="https://slpl.bibliocommons.com/locations">Saint Louis Public Library System</a>
+                    </li> 
+                    <li> 
+                        <a href="https://www.slcl.org/branches">Saint Louis County Library System</a>
+                    </li> 
+                    <li> 
+                      <a href="http://www.mlc-stl.org/find-your-library/">Municipal Library System</a>
+                        </li> 
+                        <li>
+                        <a href="https://bridges.searchmobius.org/">Bridges Library System</a> 
+                        </li>
+                        <li>
+                        <a href="http://catalog.wustl.edu">Washington University Library System</a> 
+                        </li>
+                        <li>
+                        <a href="http://libcat.slu.edu/">Saint Louis University Library System</a> 
+                        </li>
+                
+                </ol>  
+            </div> </tr>  </td> 
+        </table>
+
+ <!--  for when I input all their information into my database
+      <table>
         {% for contact in libraryAdd %} 
         <tr><td><h2><a href="googlemaps..... or ">{{contact.name}}</a></h2></td></tr> 
         <tr><td><p>{{contact.street}}<br>
@@ -15,7 +44,7 @@
         <tr><td>
         <hr></hr></td></tr>
         {% endfor %}
-        
+        -->    
 </table>
 </form>
 

@@ -26,9 +26,61 @@
               {
               display: inline-block;
               }
-            body{
-              padding: 3em
+            .output{
+              float: center; 
             }
+            body{
+              padding: 4em
+            }
+            .query {
+              padding-top: 2em;
+              vertical-align: bottom;
+            }
+            .note {
+              font-size: .8em;
+              padding-bottom: 2em;
+            }
+            .empty{
+              width: 10em;
+            }
+            .selectall {
+              padding-top: .2em;
+              padding-bottom: .7em;
+              padding-left: 4em;
+            }
+            #nodec {
+              text-decoration: none;
+            }
+            .contact{
+              font-size: 1.5em;
+              padding-top: .1em;
+              font-weight: 700;
+            }
+            /* unvisited link */
+            a:link {
+            color: black;
+            }
+            /* visited link */
+            a:visited {
+                color: black;
+            }
+
+            /* mouse over link */
+            a:hover {
+                color: grey;
+            }
+
+            /* selected link */
+            a:active {
+                color: blue;
+            }
+            #grey {
+              background-color: rgb(218, 218, 218);
+            }
+            #white {
+              background-color: white;
+            }
+
         </style>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -38,9 +90,6 @@
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
-
-
 
        <script>
 
@@ -53,18 +102,10 @@
              
              </script>
     </head>
-    <body>      
-                <!-- Collect the nav links, forms, and other content for toggling 
-              
-                <div class="navbar navbar-expand-lg navbar-dark bg-primary" id="bs-example-navbar-collapse-1">
-                  <ul class="nav navbar-nav">
-                    <a class="navbar-brand" href="#">
-                          <img alt="Brand" src="...">
-                        </a>
-                    <li class="active" id="navbarColor01"><a href="/">Home <span class="sr-only">(current)</span></a></li>
-                    <li class=".dropdown-menu">
-                      <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Contact information
-                        <span class="caret"></span></button>
+    <body>
+                
+                         
+<nav>
                       <ul class="dropdown-menu">
                         <li role="presentation"><a href="https://slpl.bibliocommons.com/locations">Saint Louis Public Library System</a></li>
                         <li role="presentation"><a href="https://www.slcl.org/branches">Saint Louis County Library System</a></li>
@@ -73,33 +114,11 @@
                         <li role="presentation"><a href="http://catalog.wustl.edu">Washington University Library System</a></li>
                         <li role="presentation"><a href="http://libcat.slu.edu/">Saint Louis University Library System</a></li>
                       </ul>
-                    </li>
-                  </ul>
-                  <form class="navbar-form navbar-left">
-                    <div class="form-group">
-                      <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                      <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
-                      <input type="text" class="form-control" placeholder="Search">
-                    </div>
-                    <button type="submit" class="btn btn-default">Submit</button>
-                  </form>
-                  <ul class="nav navbar-nav navbar-right">
-                      </ul>
-                    </li>
-                  </ul>
-                </div><!-- /.navbar-collapse -->
-              </div><!-- /.container-fluid -->
             </nav>
 
 
 
-        <div style='float: right'>
+        <div style='float: right', 'float:top'>
           {% if 'user' in session %}
             <div>Hello, {{ session['user'] }}</div>
             <form action="/logout" method="post" id='logout'>
@@ -109,7 +128,8 @@
             <form action="/register" method="post" id='login'>
               <table>
               <tr>
-                    <td>Would you like to view saved searches?
+                    <td colspan ="2" >Would you like to view saved searches?</td></tr><tr>
+                    <td>
                 <label>Username</label>
                     </td>
                      <td>
@@ -131,23 +151,22 @@
             </form>
         {% endif %}
         </div>
-        <h1>
-            Saint Louis Libary Search Engine
+        <!--<img src="./images/liblogo.jpg" alt="Lib Logo" /> -->
         </h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           <ul class=flashes>
           {% for category, message in messages %}
-            <li class="{{ category }}">{{ message }}</li>
+            <p class="{{ category }}">{{ message }}</p>
           {% endfor %}
     </ul>
            {% endif %}
           {% endwith %}
-
+          
           <form method='POST' action='/'>
             <table>
                 <tr>
-                    <td>
+                    <td><div class ="query">
                         <label>Search by:
                                 <select name="category">
                                     <option value="keyword" default>Keyword</option>
@@ -156,39 +175,57 @@
                                     <option value="author">Author</option>
                                 </select>
                         </label>
+                        </div>
                     </td>
-                     <td>      
+                    <td>
+                    <div class= "empty"></div>
+                  </td>
+                     <td><div class ="query">   
                         <label>Search for:
                             {% if query %}
                                 <input name="query" type="text" value="{{query}}"/>
                             {% else %}
                                 <input name="query" type="text" placeholder="Search here" />
                             {% endif %}
-                        </label> 
-                     </td>
-                </tr>
+                        </label></div>
+                      </td> 
+                      </tr></table>
+                      <table>
+                
                 <tr>
-                    <td> * Note: Not all libraries except all search types</td>
-                </tr>
-                    <tr><td></td></tr>
-            </table>
+                    <td><div class ="note"> * Note: Not all libraries except all search types</div></td>
+                </tr></table>
+                    
+            
             
             <nav>
-            <ul class="nav nav-tabs">
+            <ul class="nav nav-tabs" id="nodec">
                     {% if all_searches %}
-                    <li role="presentation" ><a href="/">Home</a></li>
-                    {% if 'user' in session %}
-                    <li role="presentation" class="active"><a href="/searchhistory">Search History</a></li>
-                    {% endif %}
+                      <li role="presentation" ><a href="/">Home</a></li>
+                      <li role="presentation" ><a href="/contact">Contact</a></li>
+                      {% if 'user' in session %}
+                        <li role="presentation" class="active"><a href="/searchhistory">Search History</a></li>
+                      {% endif %}
+                     
+
+                    {% elif locate %}
+                      <li role="presentation" ><a href="/">Home</a></li>
+                      <li role="presentation" class="active"><a href="/contact">Contact</a></li>
+                      {% if 'user' in session %}
+                        <li role="presentation"><a href="/searchhistory">Search History</a></li>
+                      {% endif %}
+                      
+
                     {% else %}
-                    <li role="presentation" class="active" ><a href="/">Home</a></li>
-                    {% if 'user' in session %}
-                    <li role="presentation" ><a href="/searchhistory">Search History</a></li>
-                    {% endif %}
+                      <li role="presentation" class="active" ><a href="/">Home</a></li>
+                      <li role="presentation" ><a href="/contact">Contact</a></li>
+                      {% if 'user' in session %}
+                        <li role="presentation" ><a href="/searchhistory">Search History</a></li>
+                      {% endif %}
                     {% endif %}
                   </ul>
             </nav>
-            
+            {% if library_table %}
             <table>
             <!--send library name object   -->
                     <tr>
@@ -203,20 +240,28 @@
                         </tr><tr>
                         {% endif %}
                     {% endfor %}
-                    <input type="checkbox" onClick="toggle(this)" /> Select All<br/>
                     </tr>
+                    <tr><td>
+                  <div class="selectall">
+                      <strong><input type="checkbox" onClick="toggle(this)" /> Select All</strong>
+                  </div></td></tr>
                     <tr>
                         <td>
                             <input type="submit" />
                         </td>
                     </tr>
-                    <tr>
+                    </table>
+              {% endif %}
+                    <!-- <tr>    not currently working, only inline is
                         <td>
                             For development purposes only:<br>
                                     <input type="radio" name="view" value="tab"> Tab format<br>
                                     <input type="radio" name="view" value="inline" checked> Inline<br>
                         </td>
-                        </tr>
+                        </tr> -->
+                          <tr><td>
+                      <input type="hidden" name="view" value="inline"/>
+                    </td></tr>
                         </table>
 
         {% block content %}

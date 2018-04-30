@@ -1,52 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-            <table><tr><td>
+    <table>
+        <tr>
+            <td>
                 {% if list_of_urls %}
                     {% for i in list_of_urls %}
                 <div> 
-                    <object type="text/html" data="{{i}}" width="800px" height="600px" style="overflow:auto;border:5px ridge blue">
+                    <object class="output" type="text/html" data="{{i}}" width="800px" height="600px" padding="3em" style="overflow:auto;border:5px ridge blue">
                         </object>
-                </div>  </td> 
-                {% if loop.index is divisibleby 4 %}
-            </tr><tr>
-            {% endif %}
+                </div>  
+            </td> 
+        </tr>
                     {% endfor %}
                     {% endif %}
-            </table>
-
-            <table><tr><td>
-                    <h3>Contact information</h3> <h6>- hard coded not looped out of my database</h6>
-                    <div> 
-                        <ol>
-                            <li> 
-                                <a href="https://slpl.bibliocommons.com/locations">Saint Louis Public Library System</a>
-                            </li> 
-                            <li> 
-                                <a href="https://www.slcl.org/branches">Saint Louis County Library System</a>
-                            </li> 
-                            <li> 
-                              <a href="http://www.mlc-stl.org/find-your-library/">Municipal Library System</a>
-                                </li> 
-                                <li>
-                                <a href="https://bridges.searchmobius.org/">Bridges Library System</a> 
-                                </li>
-                                <li>
-                                <a href="http://catalog.wustl.edu">Washington University Library System</a> 
-                                </li>
-                                <li>
-                                <a href="http://libcat.slu.edu/">Saint Louis University Library System</a> 
-                                </li>
-                        
-                        </ol>  
+    </table>
 
 
-
-                    </div> </tr>  </td> 
-                </table>
-       
-</table>
-</form>
 
 {% endblock %}
 

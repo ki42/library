@@ -2,7 +2,7 @@ from flask import request, redirect, render_template, session, flash
 import cgi
 import webbrowser
 from app import app, db
-from models import Library, Categories, User, SearchHistory
+from models import Library, Categories, User, SearchHistory, LibraryContact
 from hashutils import check_pw_hash
 
 app.secret_key = 'kdjiong395yr1nlkern'
@@ -11,6 +11,7 @@ app.secret_key = 'kdjiong395yr1nlkern'
 library_table = Library.query.all()
 
 #some helper functions pulled out of my existing code because I need rereuse the variables in other functions. 
+
 def searchedlibraries():
     user = session['user'] #who's logged in?
     users = User.query.filter_by(user=user).first() #get user line from table.
@@ -33,7 +34,16 @@ def searchedlibraries():
     return [searched, list_lib_names] 
 
 
-
+@app.route("/delete", methods=['POST'])
+def delete():
+    searchid = request.form['searchid']
+    delete_id = SearchHistory.query.get(searchid)
+    if not delete_id:
+        return redirect("/searchhistory")
+    db.session.delete(delete_id)
+    db.session.commit()
+    flash("entry deleted")
+    return redirect('/searchhistory')
 
 # def searchedcategories():
 #    users = User.query.filter_by(user=user).first() #get user line from table.
@@ -165,15 +175,9 @@ def search():
                         )
 
 #            if request.form['view'] == 'tab':
-#                for i list_of_urls:
-#                    #this is still not the right code for tabs, needs to be JavaScript something....
-#                    the_urls = """ <a href="{0}".format(i) target="_blank"></a> """  
-#                    return redirect(the_urls)
-#                      
-#                    render_template('tab.html',
-#                        list_of_urls = list_of_urls, 
-#                        inline= inline,
-#                        library_table = library_table))   #this should be a for loop redirect. 
+#                render_template('tab.html',
+#                    list_of_urls = list_of_urls)
+
 
 
         else:                #it had a user submission error                          
@@ -195,15 +199,7 @@ def search():
 #TODO handle delete function
 
 
-@app.route("/delete", methods=['POST'])
-def delete():
-    searchid = request.form['searchid']
-    delete_id = SearchHistory.query.get(searchid)
-    if not delete_id:
-        return redirect("tab")
-    db.session.delete(delete_id)
-    db.session.commit()
-    return redirect('inline')
+
 
 @app.route("/searchhistory", methods=['GET'])  #Display for user
 def show_search():
@@ -263,19 +259,24 @@ def logout():
 @app.route("/contact", methods=['GET', 'POST']) #not currently using this handler and it's associated table
 def contact():
     if request.method == 'GET':
-        LibraryAdd = LibraryContact.query.join(Library, 
-                Library.id==LibraryContact.owner).add_columns(Library.id, 
-                Library.library_name,
-                LibraryContact.street,   
-                LibraryContact.city,         
-                LibraryContact.zipcode,
-                LibraryContact.email,
-                LibraryContact.phone,
-                LibraryContact.owner)
+        locate = "True"
+#        LibraryAdd = LibraryContact.query.join(Library, 
+#                Library.id== LibraryContact.owner).add_columns(Library.id, 
+#                Library.library_name,
+#                LibraryContact.street,   
+#                LibraryContact.city,         
+#                LibraryContact.zipcode,
+#                LibraryContact.email,
+#                LibraryContact.phone,
+#                LibraryContact.owner)
                 #.paginate(page, 1, False)
-        return render_template('contact.html', 
-            libraryAdd = LibraryAdd)  #needs both the library and the contact objects
+        return render_template('contact.html',
+           locate = locate)
+#            libraryAdd = LibraryAdd)  #needs both the library and the contact objects
 
+@app.route("/images")
+def images():
+    return ("""<img src="./images/liblogo.jpg" alt="Lib Logo" style="width:100px;height:100px;">""")
 
 if __name__ == "__main__":
     app.run()
