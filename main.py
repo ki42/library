@@ -90,11 +90,12 @@ def search():
         else:
  #       if request.form['library']:             #did my user check a library?
             if list_of_checkedboxes == []:
-                list_of_checkedboxes = request.form.getlist('library')
-            else: 
-                flash("Please check at least one library", category="error")
-                checkbox_error = "error"
-                return redirect("/")
+                if request.form.getlist('library') != []:
+                    list_of_checkedboxes = request.form.getlist('library')
+                else: 
+                    flash("Please check at least one library", category="error")
+                    checkbox_error = "error"
+                    return redirect("/")
             
         if not query_error and not checkbox_error:  #this passes if the strings stay empty
             list_of_urls = []   
