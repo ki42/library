@@ -4,6 +4,9 @@
 <h3>Search History </h3>
 <div class="search"> 
 <table class="searchhis">
+    {% if not all_searches %}
+    <div>No search history!</div>
+    {% endif %}
 
     {% for i in range(all_searches|length) %}
     <tr> {% if i % 2 == 0 %}

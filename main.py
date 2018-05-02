@@ -144,7 +144,7 @@ def search():
                 db.session.commit()  
                 my_searches = SearchHistory.query.filter_by(owner_id = owner).all()
                 
-                if my_searches:            
+                if my_searches:                                  # view my search history
                     lib_names =[]
                     for n in my_searches:
                         list_libraries = [x.strip() for x in n.libraries.split('.')]
@@ -154,32 +154,44 @@ def search():
                                 if j == library.id:
                                     lib_names = lib_names.append(library.name) #this has only worked for one entry.
                             each_lib_names = each_lib_names.append(lib_names)
-                            
 
-            if request.form.getlist('lib'): #if the search is being returned, it doesn't have inline/view
-                return render_template('index.html', 
-                    list_of_urls = list_of_urls, 
-                    library_table = library_table,
-                    category = cat,
-                    query = query)
+                
 
-            if request.form['view'] == 'inline': 
+                if request.form['view'] == 'inline' and my_searches: 
+                    inline = request.form['view']
+                    return render_template('index.html', 
+                        list_of_urls = list_of_urls, 
+                        inline= inline,
+                        library_table = library_table,
+                        category = cat,
+                        query = query, 
+                        my_searches = my_searches,
+                        each_lib_names = each_lib_names
+                                )
+            
+            if request.form.getlist('lib'): #if the search is being returned, it doesn't have inline/view button
+                    return render_template('index.html', 
+                        list_of_urls = list_of_urls, 
+                        library_table = library_table,
+                        category = cat,
+                        query = query)
+            if request.form['view'] == 'inline' :
                 inline = request.form['view']
                 return render_template('index.html', 
                     list_of_urls = list_of_urls, 
-                    inline= inline,
+                    inline = inline,
                     library_table = library_table,
                     category = cat,
                     query = query, 
-                    my_searches = my_searches,
-                    each_lib_names = each_lib_names
-                        )
+                                )
 
 #            if request.form['view'] == 'tab':
 #                render_template('tab.html',
 #                    list_of_urls = list_of_urls)
 
-
+            
+            
+         
 
         else:                #it had a user submission error                          
             return render_template("index.html",    
